@@ -131,7 +131,7 @@ def get_video_comments(youtube, list_video_ids):
                 videoId=video_id)
             response = request.execute()
         
-            comments_in_video = [comment['snippet']['topLevelComment']['snippet']['textOriginal'] for comment in response['items']]
+            comments_in_video = [comment['snippet']['topLevelComment']['snippet']['textOriginal'] for comment in response['items'][0:10]]
             comments_in_video_info = {'video_id': video_id, 'comments': comments_in_video}
 
             all_comments.append(comments_in_video_info)
@@ -141,3 +141,4 @@ def get_video_comments(youtube, list_video_ids):
             print('Could not get comments for video ' + video_id)
         
     return pd.DataFrame(all_comments)
+
