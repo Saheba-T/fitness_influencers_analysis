@@ -1,14 +1,16 @@
 """
 This file contains functions that uses the YouTube Data API v3 
-to scrape data from a given list of provided channels.S
+to scrape data from a given list of provided channels.
+
+Adapted from: https://github.com/thu-vu92/youtube-api-analysis
 """
 
-def get_channel_stats(youtube,list_channel_ids):
+def get_channel_stats(youtube,channel_ids):
     """
     Get channel statistics of given channels
     Params: youtube: build object from googleapiclient.discovery,
-            list_channel_ids: list of youtube channel ids.
-    Returns: dataframe containing channel statistics for all channels provided in the lists.
+            channel_ids: list of youtube channel ids.
+    Returns: list containing channel statistics for all channels provided in the lists.
              the statistics are: title, published date, view count, subscriber count, video count, uploads playlist
              
     """
@@ -29,7 +31,7 @@ def get_channel_stats(youtube,list_channel_ids):
                     )
         all_data.append(data)
     
-    return pd.DataFrame(all_data)
+    return all_data
 
 
 def get_video_ids(youtube,playlist_id):
@@ -79,7 +81,7 @@ def get_video_stats(youtube, list_video_ids):
     Get all desired video stats of given video
     Params: youtube: build object from googleapiclient.discovery
             list_of_video_ids: list of videos ids
-    Returns: dataframe containing the following video stats: 
+    Returns: list containing the following video stats: 
                 'channelTitle', 'title', 'description', 'tags', 'publishedAt',
                 'viewCount', 'likeCount', 'favouriteCount', 'commentCount', 'duration', 'definition'
             None value is given for any stat not available for a given video
@@ -110,35 +112,7 @@ def get_video_stats(youtube, list_video_ids):
         
             all_video_stats.append(video_stats)
                              
-    return pd.DataFrame(all_video_stats)
+    return all_video_stats
 
 
-def get_video_comments(youtube, list_video_ids):
-    
-    """
-    Get top10 comments for all videos in the provided list
-    Params: youtube: build object from googleapiclient.discovery
-            list_of_video_ids: list of videos ids
-    Returns: dataframe containing video id and list of top10 comments
-    
-    """
-    all_comments = []
-    
-    for video_id in list_video_ids:
-        try:   
-            request = youtube.commentThreads().list(
-                part="snippet,replies",
-                videoId=video_id)
-            response = request.execute()
-        
-            comments_in_video = [comment['snippet']['topLevelComment']['snippet']['textOriginal'] for comment in response['items'][0:10]]
-            comments_in_video_info = {'video_id': video_id, 'comments': comments_in_video}
-
-            all_comments.append(comments_in_video_info)
-            
-        except: 
-            # When error occurs - most likely because comments are disabled on a video
-            print('Could not get comments for video ' + video_id)
-        
-    return pd.DataFrame(all_comments)
 
