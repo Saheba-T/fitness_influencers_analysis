@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import youtube_scraping_functions as ytfuns  # Module to scrape channels and videos
 
+from os.path import dirname, abspath
 from googleapiclient.discovery import build  # Google API
 from IPython.display import JSON             # Disply JSON
 from functools import partial                # Use with Map to fix an argument
@@ -44,6 +45,6 @@ for c in channels_df['ChannelName'].unique():
     video_df = pd.concat([video_df,video_data], ignore_index=True)
     
 # Save dataframes as csv files 
-project_dir = os.getcwd()
+project_dir = project_dir = dirname(dirname(abspath("01-data-extraction.py")))
 channels_df.to_csv(project_dir + "/data/raw/fitness_channels_2023_07_11.csv", index=False)
 video_df.to_csv(project_dir + "/data/raw/fitness_videos_2023_07_11.csv", index=False)
